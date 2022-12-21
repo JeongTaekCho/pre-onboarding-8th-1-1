@@ -1,21 +1,15 @@
-import React, { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { lazy, Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-const Login = lazy(() => import("./pages/Login"));
-const Todo = lazy(() => import("./pages/Todo"));
+const Login = lazy(() => import('./pages/Login'));
+const Todo = lazy(() => import('./pages/Todo'));
 
 function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<Suspense fallback={<>...</>}>{<Login />}</Suspense>}
-      />
+      <Route path="/" element={<Suspense fallback={<>...</>}>{<Login />}</Suspense>} />
 
-      <Route
-        path="/todo"
-        element={<Suspense fallback={<>...</>}>{<Todo />}</Suspense>}
-      />
+      <Route path="/todo" element={<Suspense fallback={<>...</>}>{<Todo />}</Suspense>} />
     </Routes>
   );
 }

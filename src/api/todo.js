@@ -1,11 +1,11 @@
-import axios from "axios";
+import axios from 'axios';
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 const getHeaders = () => {
   const headers = {
     headers: {
-      Authorization: localStorage.getItem("access_token"),
-      "Content-Type": "application/json",
+      Authorization: localStorage.getItem('access_token'),
+      'Content-Type': 'application/json',
     },
   };
   return headers;
