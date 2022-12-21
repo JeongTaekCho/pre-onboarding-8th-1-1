@@ -11,7 +11,7 @@ const getHeaders = () => {
   return headers;
 };
 
-export const createTodo = async (data) => {
+export const createTodo = (data) => {
   try {
     const headers = getHeaders();
     const res = axios.post(`${SERVER_URL}/todos`, data, headers);
@@ -21,7 +21,7 @@ export const createTodo = async (data) => {
   }
 };
 
-export const getTodos = async () => {
+export const getTodos = () => {
   try {
     const headers = getHeaders();
     const res = axios.get(`${SERVER_URL}/todos`, headers);
@@ -31,7 +31,7 @@ export const getTodos = async () => {
   }
 };
 
-export const updateTodo = async (id, data) => {
+export const updateTodo = (id, data) => {
   try {
     const headers = getHeaders();
     const res = axios.put(`${SERVER_URL}/todos/${id}`, data, headers);
@@ -41,7 +41,7 @@ export const updateTodo = async (id, data) => {
   }
 };
 
-export const deleteTodo = async (id) => {
+export const deleteTodo = (id) => {
   try {
     const headers = getHeaders();
     const res = axios.delete(`${SERVER_URL}/todos/${id}`, headers);

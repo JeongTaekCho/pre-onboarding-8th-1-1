@@ -20,6 +20,7 @@ export const postLogin = async (data) => {
   } catch (err) {
     if (err.response.status === 404) {
       return alert('회원정보가 일치하지 않습니다');
-    } else console.log(err);
+    }
+    console.log(err);
   }
 };
