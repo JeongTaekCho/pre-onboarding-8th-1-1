@@ -8,6 +8,7 @@ const TodoInputComponent = styled.form`
   border: 1px solid #eee;
   border-radius: 10px;
   margin: 24px 0;
+
   input {
     width: 100%;
     padding: 8px;
@@ -18,6 +19,7 @@ const TodoInputComponent = styled.form`
     background: #fff;
     color: #202020;
   }
+
   button {
     all: unset;
     width: 80px;
@@ -31,18 +33,19 @@ const TodoInputComponent = styled.form`
   }
 `;
 
-const TodoInput = ({ screenMode, todosAddHandler }) => {
+const TodoInput = ({ handleCreateTodo }) => {
   const [todo, setTodo] = useState('');
 
-  const onChangeHandler = (e) => setTodo(e.target.value);
-  const submitHandler = (e) => {
+  const handleChangeInput = (e) => setTodo(e.target.value);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    todosAddHandler(todo);
+    handleCreateTodo(todo);
     setTodo('');
   };
   return (
-    <TodoInputComponent screenMode={screenMode} onSubmit={submitHandler}>
-      <input placeholder="new Todo.." onChange={onChangeHandler} value={todo} />
+    <TodoInputComponent onSubmit={handleSubmit}>
+      <input placeholder="new Todo.." onChange={handleChangeInput} value={todo} />
       <button type="button">+</button>
     </TodoInputComponent>
   );

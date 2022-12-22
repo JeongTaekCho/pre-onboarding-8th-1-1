@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, memo } from 'react';
 import styled from 'styled-components';
 import { BsCheckSquareFill, BsCheckSquare, BsPencil } from 'react-icons/bs';
 import { TiDeleteOutline } from 'react-icons/ti';
 
 const TodoComponent = styled.div`
   width: 100%;
+
   .todo {
     box-sizing: border-box;
     width: 100%;
@@ -15,6 +16,7 @@ const TodoComponent = styled.div`
     align-items: center;
     font-weight: 700;
     border-bottom: 1px solid #eee;
+
     input {
       width: 100%;
       padding: 8px;
@@ -22,21 +24,25 @@ const TodoComponent = styled.div`
       font-weight: 700;
       margin: 16px;
     }
+
     &.done {
       span {
-        color: ${({ screenMode }) => (screenMode ? '#B2B2B2' : '#B2B2B2')};
+        color: #b2b2b2;
         text-decoration: line-through;
       }
     }
+
     .action-icons {
       font-size: 20px;
       display: flex;
+
       .action-icon {
         cursor: pointer;
         margin: 8px;
       }
     }
   }
+
   button {
     width: 50px;
     height: 25px;
@@ -45,30 +51,31 @@ const TodoComponent = styled.div`
   }
 `;
 
-const Todo = ({ data, deleteHandler, todosUpdateHandler }) => {
+const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
   const { todo, isCompleted, id } = data;
-  const [change, setChange] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [newTodo, setNewTodo] = useState(todo);
   const inputRef = useRef();
-  const changeHandler = () => {
-    setChange(!change);
-    if (change) {
-      todosUpdateHandler(id, newTodo, false);
+  const handleEdit = () => {
+    setIsEdit(!isEdit);
+    if (isEdit) {
+      handleUpdateTodo(id, newTodo, false);
     }
   };
   const updateCancel = () => {
-    setChange(false);
+    setIsEdit(false);
     setNewTodo(todo);
   };
+  console.log('ss');
   return (
     <TodoComponent>
       <div className={isCompleted ? 'todo done' : 'todo'}>
         <span>
-          {change ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
+          {isEdit ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
         </span>
-        {change ? (
+        {isEdit ? (
           <div className="action-icons">
-            <button type="button" onClick={changeHandler}>
+            <button type="button" onClick={handleEdit}>
               수정
             </button>
             <button type="button" onClick={updateCancel}>
@@ -79,14 +86,14 @@ const Todo = ({ data, deleteHandler, todosUpdateHandler }) => {
           <div className="action-icons">
             <div
               className="action-icon complete"
-              onClick={() => todosUpdateHandler(id, false, true)}
+              onClick={() => handleUpdateTodo(id, todo, !isCompleted)}
               role="presentation">
               {isCompleted ? <BsCheckSquareFill /> : <BsCheckSquare />}
             </div>
-            <div className="action-icon" onClick={changeHandler} role="presentation">
+            <div className="action-icon" onClick={handleEdit} role="presentation">
               <BsPencil />
             </div>
-            <div className="action-icon delete" onClick={() => deleteHandler(id)} role="presentation">
+            <div className="action-icon delete" onClick={() => handleDeleteTodo(id)} role="presentation">
               <TiDeleteOutline />
             </div>
           </div>
@@ -96,4 +103,4 @@ const Todo = ({ data, deleteHandler, todosUpdateHandler }) => {
   );
 };
 
-export default Todo;
+export default memo(TodoItem);
