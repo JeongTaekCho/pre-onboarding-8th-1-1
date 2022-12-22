@@ -11,42 +11,42 @@ const getHeaders = () => {
   return headers;
 };
 
-export const createTodo = (data) => {
+export const createTodo = async (data) => {
   try {
     const headers = getHeaders();
-    const res = axios.post(`${SERVER_URL}/todos`, data, headers);
+    const res = await axios.post(`${SERVER_URL}/todos`, data, headers);
     return res;
   } catch (err) {
-    console.log(err);
+    return err;
   }
 };
 
-export const getTodos = () => {
+export const getTodos = async () => {
   try {
     const headers = getHeaders();
-    const res = axios.get(`${SERVER_URL}/todos`, headers);
+    const res = await axios.get(`${SERVER_URL}/todos`, headers);
     return res;
   } catch (err) {
-    console.log(err);
+    return err;
   }
 };
 
-export const updateTodo = (id, data) => {
+export const updateTodo = async (id, data) => {
   try {
     const headers = getHeaders();
-    const res = axios.put(`${SERVER_URL}/todos/${id}`, data, headers);
+    const res = await axios.put(`${SERVER_URL}/todos/${id}`, data, headers);
     return res;
   } catch (err) {
-    console.log(err);
+    return err;
   }
 };
 
-export const deleteTodo = (id) => {
+export const deleteTodo = async (id) => {
   try {
     const headers = getHeaders();
-    const res = axios.delete(`${SERVER_URL}/todos/${id}`, headers);
+    const res = await axios.delete(`${SERVER_URL}/todos/${id}`, headers);
     return res;
   } catch (err) {
-    console.log(err);
+    return err;
   }
 };

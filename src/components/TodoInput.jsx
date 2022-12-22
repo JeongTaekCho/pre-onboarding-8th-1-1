@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
 const TodoInputComponent = styled.form`
   width: 100%;
@@ -31,21 +31,21 @@ const TodoInputComponent = styled.form`
   }
 `;
 
-function TodoInput({ screenMode, todosAddHandler }) {
-  const [todo, setTodo] = useState("");
+const TodoInput = ({ screenMode, todosAddHandler }) => {
+  const [todo, setTodo] = useState('');
 
   const onChangeHandler = (e) => setTodo(e.target.value);
   const submitHandler = (e) => {
     e.preventDefault();
     todosAddHandler(todo);
-    setTodo("");
+    setTodo('');
   };
   return (
     <TodoInputComponent screenMode={screenMode} onSubmit={submitHandler}>
       <input placeholder="new Todo.." onChange={onChangeHandler} value={todo} />
-      <button>+</button>
+      <button type="button">+</button>
     </TodoInputComponent>
   );
-}
+};
 
 export default TodoInput;

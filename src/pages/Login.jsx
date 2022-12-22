@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { postLogin, postSignup } from "../api/auth";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { postLogin, postSignup } from '../api/auth';
 
-import InputBox from "../components/InputBox";
-import Button from "../components/Button";
+import InputBox from '../components/InputBox';
+import Button from '../components/Button';
 
 const LoginComponent = styled.div`
   width: 100%;
@@ -47,19 +47,19 @@ const LoginComponent = styled.div`
   }
 `;
 
-function Login() {
-  const [menu, setMenu] = useState("로그인");
-  const menuArray = ["로그인", "회원가입"];
+const Login = () => {
+  const [menu, setMenu] = useState('로그인');
+  const menuArray = ['로그인', '회원가입'];
   const menuClickHandler = (m) => setMenu(m);
   const navigate = useNavigate();
 
   const LOGIN_INITIAL = {
-    email: { txt: "", check: null },
-    password: { txt: "", check: null },
+    email: { txt: '', check: null },
+    password: { txt: '', check: null },
   };
   const SIGNUP_INITIAL = {
     ...LOGIN_INITIAL,
-    passwordCheck: { txt: "", check: null },
+    passwordCheck: { txt: '', check: null },
   };
   const [userInfo, setUserInfo] = useState(LOGIN_INITIAL);
   const [cursor, setCursor] = useState(false);
@@ -79,31 +79,38 @@ function Login() {
         email: userInfo.email.txt,
         password: userInfo.password.txt,
       };
-      if (menu === "로그인") {
-        postLogin(data).then((res) => res.status === 200 && navigate("/todo"));
+      if (menu === '로그인') {
+        const res = await postLogin(data);
+        if (res.status === 200) navigate('/todo');
+        else if (res.response.status === 401) alert('아이디 또는 비밀번호가 다릅니다');
       } else {
-        postSignup(data).then((res) => res.status === 201 && navigate("/todo"));
+        const res = await postSignup(data);
+        if (res.status === 201) navigate('/todo');
+        else if (res.response.status === 400) alert('중복된 회원입니다');
       }
     }
   };
 
   const validity = (id, txt) => {
-    if (id === "email") {
-      if (!txt.includes("@")) return "이메일은 @가 포함되어야 합니다";
-      else return true;
-    } else if (id === "password") {
-      if (txt.length < 8) return "비밀번호는 8자리 이상이여야 합니다";
-      else return true;
-    } else if (id === "passwordCheck") {
-      if (txt !== userInfo.password.txt) return "비밀번호가 다릅니다";
-      else return true;
+    if (id === 'email') {
+      if (!txt.includes('@')) return '이메일은 @가 포함되어야 합니다';
+      return true;
+    }
+    if (id === 'password') {
+      if (txt.length < 8) return '비밀번호는 8자리 이상이여야 합니다';
+      return true;
+    }
+    if (id === 'passwordCheck') {
+      if (txt !== userInfo.password.txt) return '비밀번호가 다릅니다';
+      return true;
     }
   };
   const checkCursor = (obj) => {
     let result = true;
-    for (const key in obj) {
-      if (obj[key].check !== true) {
-        result = false;
+    const values = Object.values(obj);
+    for (let i = 0; i < values.length; i++) {
+      if (values[i].check !== true) {
+        result = true;
         break;
       }
     }
@@ -111,23 +118,19 @@ function Login() {
   };
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    if (accessToken) navigate("/todo");
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) navigate('/todo');
   }, []);
   useEffect(() => {
-    if (menu === "로그인") setUserInfo(LOGIN_INITIAL);
+    if (menu === '로그인') setUserInfo(LOGIN_INITIAL);
     else setUserInfo(SIGNUP_INITIAL);
   }, [menu]);
   return (
     <LoginComponent>
       <div>
         <div className="menu">
-          {menuArray.map((v, i) => (
-            <div
-              key={i}
-              onClick={() => menuClickHandler(v)}
-              className={menu === v ? "select" : ""}
-            >
+          {menuArray.map((v) => (
+            <div key={v} onClick={() => menuClickHandler(v)} className={menu === v ? 'select' : ''} role="presentation">
               {v}
             </div>
           ))}
@@ -135,25 +138,10 @@ function Login() {
 
         <form onSubmit={onSubmit}>
           <h1>{menu}</h1>
-          <InputBox
-            type="text"
-            value={userInfo}
-            onChange={onChange}
-            id={"email"}
-          />
-          <InputBox
-            type="password"
-            value={userInfo}
-            onChange={onChange}
-            id={"password"}
-          />
-          {menu === "회원가입" ? (
-            <InputBox
-              type="password"
-              value={userInfo}
-              id={"passwordCheck"}
-              onChange={onChange}
-            />
+          <InputBox type="text" value={userInfo} onChange={onChange} id="email" />
+          <InputBox type="password" value={userInfo} onChange={onChange} id="password" />
+          {menu === '회원가입' ? (
+            <InputBox type="password" value={userInfo} id="passwordCheck" onChange={onChange} />
           ) : (
             <></>
           )}
@@ -165,6 +153,6 @@ function Login() {
       </div>
     </LoginComponent>
   );
-}
+};
 
 export default Login;

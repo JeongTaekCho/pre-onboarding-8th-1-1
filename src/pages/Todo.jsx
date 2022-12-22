@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import TodoInput from "../components/TodoInput";
-import TodoList from "../components/TodoList";
-import { useNavigate } from "react-router-dom";
-import { getTodos, deleteTodo, updateTodo, createTodo } from "../api/todo";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import TodoInput from '../components/TodoInput';
+import TodoList from '../components/TodoList';
+import { getTodos, deleteTodo, updateTodo, createTodo } from '../api/todo';
 
 const TodoPage = styled.div`
   width: 100vw;
@@ -40,12 +40,12 @@ const TodoContainer = styled.div`
   }
 `;
 
-function Todo() {
+const Todo = () => {
   const navigate = useNavigate();
   const [todos, setTodos] = useState([]);
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    if (!accessToken) navigate("/");
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) navigate('/');
     else getData();
   }, []);
 
@@ -54,7 +54,7 @@ function Todo() {
       const res = await createTodo({ todo });
       setTodos([...todos, res.data]);
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
   const todosUpdateHandler = async (id, todo, complete) => {
@@ -70,7 +70,7 @@ function Todo() {
       await updateTodo(id, newData);
       setTodos(newDatas);
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
 
@@ -80,7 +80,7 @@ function Todo() {
       setTodos(newDatas);
       deleteTodo(id);
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
   const getData = async () => {
@@ -88,7 +88,7 @@ function Todo() {
       const res = await getTodos();
       setTodos(res.data);
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
 
@@ -100,16 +100,10 @@ function Todo() {
         </header>
 
         <TodoInput todosAddHandler={todosAddHandler} getData={getData} />
-        {todos && (
-          <TodoList
-            todos={todos}
-            deleteHandler={deleteHandler}
-            todosUpdateHandler={todosUpdateHandler}
-          />
-        )}
+        {todos && <TodoList todos={todos} deleteHandler={deleteHandler} todosUpdateHandler={todosUpdateHandler} />}
       </TodoContainer>
     </TodoPage>
   );
-}
+};
 
 export default Todo;
