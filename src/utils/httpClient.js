@@ -9,8 +9,8 @@ client.interceptors.request.use((config) => {
     return config;
   }
 
-  if (localStorage.getItem('token') && config.headers) {
-    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+  if (localStorage.getItem('access_token') && config.headers) {
+    config.headers.Authorization = `${localStorage.getItem('access_token')}`;
   }
   return config;
 });
