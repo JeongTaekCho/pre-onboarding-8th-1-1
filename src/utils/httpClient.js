@@ -5,14 +5,17 @@ const client = axios.create({
 });
 
 client.interceptors.request.use((config) => {
-  if (config.url === '/auth/signup' || config.url === '/auth/signin') {
+  const accessToken = localStorage.getItem('access_token');
+  if (!accessToken) {
+    config.headers['Content-Type'] = 'application/json';
     return config;
   }
 
-  if (localStorage.getItem('access_token') && config.headers) {
-    config.headers.Authorization = `${localStorage.getItem('access_token')}`;
+  if (accessToken && config.headers) {
+    config.headers.Authorization = accessToken;
+    config.headers['Content-Type'] = 'application/json';
+    return config;
   }
-  return config;
 });
 
 export default client;

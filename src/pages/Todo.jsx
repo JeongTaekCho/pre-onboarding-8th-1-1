@@ -5,6 +5,7 @@ import TodoInput from '../components/TodoInput';
 import TodoList from '../components/TodoList';
 import { todoAPI } from '../api/todo';
 import { useFetch } from '../hooks/useFetch';
+import Button from '../components/Button';
 
 const TodoPage = styled.div`
   width: 100vw;
@@ -79,12 +80,19 @@ const Todo = () => {
       return err;
     }
   };
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
+  };
 
   return (
     <TodoPage>
       <TodoContainer>
         <header>
           <h1>Todo-List</h1>
+          <Button type="button" onClick={handleLogout} style={{ width: '100px', cursor: 'pointer' }}>
+            로그아웃
+          </Button>
         </header>
         <TodoInput handleCreateTodo={handleCreateTodo} />
         {todos && <TodoList todos={todos} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />}
