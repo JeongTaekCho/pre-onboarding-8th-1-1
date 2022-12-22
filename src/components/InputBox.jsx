@@ -26,12 +26,12 @@ const InputBoxComponent = styled.div`
 
 const InputBox = ({ type, value, id, onChange }) => {
   const errorMsg = value[id] && value[id].check;
-  const deafultValue = value[id] && value[id].txt;
+  const inputValue = value[id] && value[id].txt;
 
   return (
     <InputBoxComponent>
       <label>{id}</label>
-      <input type={type} defaultValue={deafultValue} id={id} onChange={(e) => onChange(id, e.target.value)} />
+      <input type={type} value={inputValue || ''} id={id} onChange={(e) => onChange(id, e.target.value)} />
       {errorMsg ? <div className="error">{errorMsg}</div> : <></>}
     </InputBoxComponent>
   );

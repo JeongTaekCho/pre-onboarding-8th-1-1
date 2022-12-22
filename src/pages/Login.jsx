@@ -59,14 +59,17 @@ const Login = () => {
   const [menu, setMenu] = useState('로그인');
   const menuArray = ['로그인', '회원가입'];
   const navigate = useNavigate();
-
-  const [userInfo, setUserInfo] = useState(LOGIN_INITIAL);
+  const objectCopy = (obj) => {
+    const newObj = JSON.parse(JSON.stringify(obj));
+    return newObj;
+  };
+  const [userInfo, setUserInfo] = useState(objectCopy(LOGIN_INITIAL));
   const [cursor, setCursor] = useState(false);
   const [isModal, setIsModal] = useState(false);
 
   const handleIsModal = () => setIsModal(!isModal);
 
-  const onChange = (id, txt) => {
+  const handleChangeInput = (id, txt) => {
     setUserInfo((state) => {
       const newState = { ...state };
       newState[id].txt = txt;
@@ -75,7 +78,7 @@ const Login = () => {
       return newState;
     });
   };
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (cursor) {
       const data = {
@@ -127,14 +130,14 @@ const Login = () => {
     return result;
   };
 
-  const menuClickHandler = (m) => setMenu(m);
+  const handleMenuClick = (m) => setMenu(m);
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
     if (accessToken) navigate('/todo');
   }, []);
   useEffect(() => {
-    if (menu === '로그인') setUserInfo(LOGIN_INITIAL);
-    else setUserInfo(SIGNUP_INITIAL);
+    if (menu === '로그인') setUserInfo(objectCopy(LOGIN_INITIAL));
+    else setUserInfo(objectCopy(SIGNUP_INITIAL));
   }, [menu]);
   return (
     <LoginComponent>
@@ -148,23 +151,23 @@ const Login = () => {
       <div>
         <div className="menu">
           {menuArray.map((v) => (
-            <div key={v} onClick={() => menuClickHandler(v)} className={menu === v ? 'select' : ''} role="presentation">
+            <div key={v} onClick={() => handleMenuClick(v)} className={menu === v ? 'select' : ''} role="presentation">
               {v}
             </div>
           ))}
         </div>
 
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit}>
           <h1>{menu}</h1>
-          <InputBox type="text" value={userInfo} onChange={onChange} id="email" />
-          <InputBox type="password" value={userInfo} onChange={onChange} id="password" />
+          <InputBox type="text" value={userInfo} onChange={handleChangeInput} id="email" />
+          <InputBox type="password" value={userInfo} onChange={handleChangeInput} id="password" />
           {menu === '회원가입' ? (
-            <InputBox type="password" value={userInfo} id="passwordCheck" onChange={onChange} />
+            <InputBox type="password" value={userInfo} id="passwordCheck" onChange={handleChangeInput} />
           ) : (
             <></>
           )}
 
-          <Button onClick={onSubmit} style={{ cursor }}>
+          <Button onClick={handleSubmit} style={{ cursor }}>
             {menu}
           </Button>
         </form>
