@@ -5,6 +5,7 @@ import { postLogin, postSignup } from '../api/auth';
 
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
+import Modal from '../components/Modal';
 
 const LoginComponent = styled.div`
   width: 100%;
@@ -46,23 +47,26 @@ const LoginComponent = styled.div`
     padding: 15px;
   }
 `;
-
+const LOGIN_INITIAL = {
+  email: { txt: '', check: null },
+  password: { txt: '', check: null },
+};
+const SIGNUP_INITIAL = {
+  ...LOGIN_INITIAL,
+  passwordCheck: { txt: '', check: null },
+};
 const Login = () => {
   const [menu, setMenu] = useState('로그인');
   const menuArray = ['로그인', '회원가입'];
   const menuClickHandler = (m) => setMenu(m);
   const navigate = useNavigate();
 
-  const LOGIN_INITIAL = {
-    email: { txt: '', check: null },
-    password: { txt: '', check: null },
-  };
-  const SIGNUP_INITIAL = {
-    ...LOGIN_INITIAL,
-    passwordCheck: { txt: '', check: null },
-  };
   const [userInfo, setUserInfo] = useState(LOGIN_INITIAL);
   const [cursor, setCursor] = useState(false);
+  const [isModal, setIsModal] = useState(false);
+
+  const handleIsModal = () => setIsModal(!isModal);
+
   const onChange = (id, txt) => {
     setUserInfo((state) => {
       const newState = { ...state };
@@ -82,11 +86,11 @@ const Login = () => {
       if (menu === '로그인') {
         const res = await postLogin(data);
         if (res.status === 200) navigate('/todo');
-        else if (res.response.status === 401) alert('아이디 또는 비밀번호가 다릅니다');
+        else if (res.response.status === 401) handleIsModal();
       } else {
         const res = await postSignup(data);
         if (res.status === 201) navigate('/todo');
-        else if (res.response.status === 400) alert('중복된 회원입니다');
+        else if (res.response.status === 400) handleIsModal();
       }
     }
   };
@@ -113,7 +117,7 @@ const Login = () => {
     const values = Object.values(obj);
     for (let i = 0; i < values.length; i++) {
       if (values[i].check !== true) {
-        result = true;
+        result = false;
         break;
       }
     }
@@ -130,6 +134,13 @@ const Login = () => {
   }, [menu]);
   return (
     <LoginComponent>
+      {isModal && (
+        <Modal
+          title={menu === '로그인' ? '로그인 오류' : '회원가입 오류'}
+          content={menu === '로그인' ? '아이디, 비밀번호를 확인해주세요' : '중복된 회원입니다'}
+          onClose={handleIsModal}
+        />
+      )}
       <div>
         <div className="menu">
           {menuArray.map((v) => (
