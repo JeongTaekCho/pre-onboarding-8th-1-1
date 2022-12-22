@@ -1,29 +1,5 @@
-import React, { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import Router from './router/router';
 
-const Login = lazy(() => import('./pages/Login'));
-const Todo = lazy(() => import('./pages/Todo'));
-
-const App = () => (
-  <Routes>
-    <Route
-      path="/"
-      element={
-        <Suspense fallback={<>...</>}>
-          <Login />
-        </Suspense>
-      }
-    />
-
-    <Route
-      path="/todo"
-      element={
-        <Suspense fallback={<>...</>}>
-          <Todo />
-        </Suspense>
-      }
-    />
-  </Routes>
-);
+const App = () => <Router />;
 
 export default App;

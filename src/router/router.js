@@ -1,14 +1,32 @@
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Todo from '../pages/Todo';
-import Login from '../pages/Login';
 
-const Router = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/todo" element={<Todo />} />
-      <Route path="/" element={<Login />} />
-    </Routes>
-  </BrowserRouter>
-);
+const Login = lazy(() => import('../pages/Login'));
+const Todo = lazy(() => import('../pages/Todo'));
+
+const Router = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Suspense fallback={<>...</>}>
+              <Login />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/todo"
+          element={
+            <Suspense fallback={<>...</>}>
+              <Todo />
+            </Suspense>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default Router;
