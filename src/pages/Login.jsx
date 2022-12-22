@@ -93,7 +93,10 @@ const Login = () => {
 
   const validity = (id, txt) => {
     if (id === 'email') {
-      if (!txt.includes('@')) return '이메일은 @가 포함되어야 합니다';
+      const regex =
+        // eslint-disable-next-line no-useless-escape
+        /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      if (txt.match(regex) === null) return '이메일 형식이 올바르지 않습니다';
       return true;
     }
     if (id === 'password') {
