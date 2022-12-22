@@ -1,52 +1,13 @@
-import axios from 'axios';
+import client from '../utils/httpClient';
 
-const SERVER_URL = process.env.REACT_APP_SERVER_URL;
-const getHeaders = () => {
-  const headers = {
-    headers: {
-      Authorization: localStorage.getItem('access_token'),
-      'Content-Type': 'application/json',
-    },
-  };
-  return headers;
-};
-
-export const createTodo = async (data) => {
-  try {
-    const headers = getHeaders();
-    const res = await axios.post(`${SERVER_URL}/todos`, data, headers);
-    return res;
-  } catch (err) {
-    return err;
-  }
-};
-
-export const getTodos = async () => {
-  try {
-    const headers = getHeaders();
-    const res = await axios.get(`${SERVER_URL}/todos`, headers);
-    return res;
-  } catch (err) {
-    return err;
-  }
-};
-
-export const updateTodo = async (id, data) => {
-  try {
-    const headers = getHeaders();
-    const res = await axios.put(`${SERVER_URL}/todos/${id}`, data, headers);
-    return res;
-  } catch (err) {
-    return err;
-  }
-};
-
-export const deleteTodo = async (id) => {
-  try {
-    const headers = getHeaders();
-    const res = await axios.delete(`${SERVER_URL}/todos/${id}`, headers);
-    return res;
-  } catch (err) {
-    return err;
-  }
+export const todoAPI = {
+  createTodo: async (todo) => {
+    await client.post('/todos', { todo });
+  },
+  updateTodo: async (id, todo, isCompleted) => {
+    await client.put(`/todos/${id}`, { todo, isCompleted });
+  },
+  deleteTodo: async (id) => {
+    await client.delete(`/todos/${id}`);
+  },
 };
