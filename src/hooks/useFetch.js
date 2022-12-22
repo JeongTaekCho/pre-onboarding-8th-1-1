@@ -5,6 +5,7 @@ export const useFetch = (url) => {
   const [data, setData] = useState(null);
   const [isPending, setIsPending] = useState(true);
   const [error, setError] = useState(null);
+  const [refetch, setRefetch] = useState(0);
 
   useEffect(() => {
     client
@@ -21,7 +22,7 @@ export const useFetch = (url) => {
         setIsPending(false);
         setError(err.message);
       });
-  }, [url]);
+  }, [refetch]);
 
-  return { isPending, data, setData, error };
+  return { isPending, data, setData, error, setRefetch };
 };
