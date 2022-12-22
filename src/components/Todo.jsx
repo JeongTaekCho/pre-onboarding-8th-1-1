@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
-import styled from "styled-components";
-import { BsCheckSquareFill, BsCheckSquare, BsPencil } from "react-icons/bs";
-import { TiDeleteOutline } from "react-icons/ti";
+import React, { useState, useRef } from 'react';
+import styled from 'styled-components';
+import { BsCheckSquareFill, BsCheckSquare, BsPencil } from 'react-icons/bs';
+import { TiDeleteOutline } from 'react-icons/ti';
 
 const TodoComponent = styled.div`
   width: 100%;
@@ -24,7 +24,7 @@ const TodoComponent = styled.div`
     }
     &.done {
       span {
-        color: ${({ screenMode }) => (screenMode ? "#B2B2B2" : "#B2B2B2")};
+        color: ${({ screenMode }) => (screenMode ? '#B2B2B2' : '#B2B2B2')};
         text-decoration: line-through;
       }
     }
@@ -45,7 +45,7 @@ const TodoComponent = styled.div`
   }
 `;
 
-function Todo({ data, deleteHandler, todosUpdateHandler }) {
+const Todo = ({ data, deleteHandler, todosUpdateHandler }) => {
   const { todo, isCompleted, id } = data;
   const [change, setChange] = useState(false);
   const [newTodo, setNewTodo] = useState(todo);
@@ -62,38 +62,31 @@ function Todo({ data, deleteHandler, todosUpdateHandler }) {
   };
   return (
     <TodoComponent>
-      <div className={isCompleted ? "todo done" : "todo"}>
+      <div className={isCompleted ? 'todo done' : 'todo'}>
         <span>
-          {change ? (
-            <input
-              value={newTodo}
-              onChange={(e) => setNewTodo(e.target.value)}
-              ref={inputRef}
-            />
-          ) : (
-            todo
-          )}
+          {change ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
         </span>
         {change ? (
           <div className="action-icons">
-            <button onClick={changeHandler}>수정</button>
-            <button onClick={updateCancel}>취소</button>
+            <button type="button" onClick={changeHandler}>
+              수정
+            </button>
+            <button type="button" onClick={updateCancel}>
+              취소
+            </button>
           </div>
         ) : (
           <div className="action-icons">
             <div
               className="action-icon complete"
               onClick={() => todosUpdateHandler(id, false, true)}
-            >
+              role="presentation">
               {isCompleted ? <BsCheckSquareFill /> : <BsCheckSquare />}
             </div>
-            <div className="action-icon" onClick={changeHandler}>
+            <div className="action-icon" onClick={changeHandler} role="presentation">
               <BsPencil />
             </div>
-            <div
-              className="action-icon delete"
-              onClick={() => deleteHandler(id)}
-            >
+            <div className="action-icon delete" onClick={() => deleteHandler(id)} role="presentation">
               <TiDeleteOutline />
             </div>
           </div>
@@ -101,6 +94,6 @@ function Todo({ data, deleteHandler, todosUpdateHandler }) {
       </div>
     </TodoComponent>
   );
-}
+};
 
 export default Todo;

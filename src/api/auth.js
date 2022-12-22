@@ -8,7 +8,7 @@ export const postSignup = async (data) => {
     if (res) localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
     return res;
   } catch (err) {
-    console.log(err);
+    return err;
   }
 };
 
@@ -18,8 +18,6 @@ export const postLogin = async (data) => {
     if (res) localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
     return res;
   } catch (err) {
-    if (err.response.status === 404) {
-      return alert('회원정보가 일치하지 않습니다');
-    } else console.log(err);
+    return err;
   }
 };

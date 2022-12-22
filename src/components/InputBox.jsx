@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const InputBoxComponent = styled.div`
   width: 300px;
@@ -21,22 +21,16 @@ const InputBoxComponent = styled.div`
     font-size: 12px;
   }
 `;
-
-function InputBox({ type, value, id, onChange }) {
+const InputBox = ({ type, value, id, onChange }) => {
   const errorMsg = value[id] && value[id].check;
   const deafultValue = value[id] && value[id].txt;
   return (
     <InputBoxComponent>
       <label>{id}</label>
-      <input
-        type={type}
-        defaultValue={deafultValue}
-        id={id}
-        onChange={(e) => onChange(id, e.target.value)}
-      />
+      <input type={type} defaultValue={deafultValue} id={id} onChange={(e) => onChange(id, e.target.value)} />
       {errorMsg ? <div className="error">{errorMsg}</div> : <></>}
     </InputBoxComponent>
   );
-}
+};
 
 export default InputBox;
