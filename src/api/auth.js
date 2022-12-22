@@ -1,4 +1,5 @@
 import axios from 'axios';
+import client from '../utils/httpClient';
 
 const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 const headers = { headers: { 'Content-Type': 'application/json' } };
@@ -21,3 +22,12 @@ export const postLogin = async (data) => {
     return err;
   }
 };
+
+// export const authAPI = {
+//   signup: (email, password) => {
+//     return client.post('/auth/signup', { email, password });
+//   },
+//   signin: (email, password) => {
+//     return client.post('/auth/signin', { email, password });
+//   },
+// };

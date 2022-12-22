@@ -7,6 +7,7 @@ const InputBoxComponent = styled.div`
   display: flex;
   flex-direction: column;
   margin: 10px 0;
+
   input {
     width: 100%;
     height: 35px;
@@ -16,14 +17,17 @@ const InputBoxComponent = styled.div`
     box-sizing: border-box;
     margin: 5px 0;
   }
+
   .error {
     color: red;
     font-size: 12px;
   }
 `;
+
 const InputBox = ({ type, value, id, onChange }) => {
   const errorMsg = value[id] && value[id].check;
   const deafultValue = value[id] && value[id].txt;
+
   return (
     <InputBoxComponent>
       <label>{id}</label>
