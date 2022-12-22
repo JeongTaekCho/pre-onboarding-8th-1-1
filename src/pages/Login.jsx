@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { postLogin, postSignup } from '../api/auth';
+import { authAPI } from '../api/auth';
 
 import InputBox from '../components/InputBox';
 import Button from '../components/Button';
@@ -58,7 +58,6 @@ const SIGNUP_INITIAL = {
 const Login = () => {
   const [menu, setMenu] = useState('로그인');
   const menuArray = ['로그인', '회원가입'];
-  const menuClickHandler = (m) => setMenu(m);
   const navigate = useNavigate();
 
   const [userInfo, setUserInfo] = useState(LOGIN_INITIAL);
@@ -84,13 +83,17 @@ const Login = () => {
         password: userInfo.password.txt,
       };
       if (menu === '로그인') {
-        const res = await postLogin(data);
-        if (res.status === 200) navigate('/todo');
-        else if (res.response.status === 401) handleIsModal();
+        const res = await authAPI.signin(data);
+        if (res.status === 200) {
+          localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
+          navigate('/todo');
+        } else if (res.response.status === 401) handleIsModal();
       } else {
-        const res = await postSignup(data);
-        if (res.status === 201) navigate('/todo');
-        else if (res.response.status === 400) handleIsModal();
+        const res = await authAPI.signup(data);
+        if (res.status === 201) {
+          localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
+          navigate('/todo');
+        } else if (res.response.status === 400) handleIsModal();
       }
     }
   };
@@ -124,6 +127,7 @@ const Login = () => {
     return result;
   };
 
+  const menuClickHandler = (m) => setMenu(m);
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
     if (accessToken) navigate('/todo');
