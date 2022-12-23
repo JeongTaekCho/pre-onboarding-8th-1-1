@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import TodoInput from "../components/TodoInput";
-import TodoList from "../components/TodoList";
-import { useNavigate } from "react-router-dom";
-import { getTodos, deleteTodo, updateTodo, createTodo } from "../api/todo";
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import TodoInput from '../components/TodoInput';
+import TodoList from '../components/TodoList';
+import { todoAPI } from '../api/todo';
+import { useFetch } from '../hooks/useFetch';
+import Button from '../components/Button';
 
 const TodoPage = styled.div`
   width: 100vw;
@@ -17,17 +19,20 @@ const TodoPage = styled.div`
   background: #fff;
   color: #202020;
 `;
+
 const TodoContainer = styled.div`
   width: 720px;
   height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
+
   header {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     h1 {
       height: 3rem;
       display: flex;
@@ -40,56 +45,45 @@ const TodoContainer = styled.div`
   }
 `;
 
-function Todo() {
+const Todo = () => {
   const navigate = useNavigate();
-  const [todos, setTodos] = useState([]);
+  const { data: todos, setRefetch, isPending } = useFetch('/todos');
+
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    if (!accessToken) navigate("/");
-    else getData();
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) navigate('/');
   }, []);
 
-  const todosAddHandler = async (todo) => {
+  const handleCreateTodo = async (todo) => {
     try {
-      const res = await createTodo({ todo });
-      setTodos([...todos, res.data]);
+      await todoAPI.createTodo(todo);
+      setRefetch((prev) => prev + 1);
     } catch (err) {
-      console.log(err);
-    }
-  };
-  const todosUpdateHandler = async (id, todo, complete) => {
-    try {
-      const newDatas = todos.map((v) => {
-        if (v.id === id) {
-          if (todo) v.todo = todo;
-          if (complete) v.isCompleted = !v.isCompleted;
-        }
-        return v;
-      });
-      const newData = newDatas.filter((v) => v.id === id)[0];
-      await updateTodo(id, newData);
-      setTodos(newDatas);
-    } catch (err) {
-      console.log(err);
+      return err;
     }
   };
 
-  const deleteHandler = (id) => {
+  const handleUpdateTodo = async (id, newTodo, isCompleted) => {
     try {
-      const newDatas = [...todos].filter((v) => v.id !== id);
-      setTodos(newDatas);
-      deleteTodo(id);
+      await todoAPI.updateTodo(id, newTodo, isCompleted);
+      setRefetch((prev) => prev + 1);
     } catch (err) {
-      console.log(err);
+      return err;
     }
   };
-  const getData = async () => {
+
+  const handleDeleteTodo = async (id) => {
     try {
-      const res = await getTodos();
-      setTodos(res.data);
+      await todoAPI.deleteTodo(id);
+      setRefetch((prev) => prev + 1);
     } catch (err) {
-      console.log(err);
+      return err;
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate('/');
   };
 
   return (
@@ -97,19 +91,17 @@ function Todo() {
       <TodoContainer>
         <header>
           <h1>Todo-List</h1>
+          <Button type="button" onClick={handleLogout} style={{ width: '100px', cursor: 'pointer' }}>
+            로그아웃
+          </Button>
         </header>
-
-        <TodoInput todosAddHandler={todosAddHandler} getData={getData} />
-        {todos && (
-          <TodoList
-            todos={todos}
-            deleteHandler={deleteHandler}
-            todosUpdateHandler={todosUpdateHandler}
-          />
+        <TodoInput handleCreateTodo={handleCreateTodo} />
+        {!isPending && (
+          <TodoList todos={todos} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />
         )}
       </TodoContainer>
     </TodoPage>
   );
-}
+};
 
 export default Todo;

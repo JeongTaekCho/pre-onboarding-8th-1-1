@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Todo from "./Todo";
+import React from 'react';
+import styled from 'styled-components';
+import TodoItem from './TodoItem';
 
 const TodoListComponent = styled.div`
   border: 1px solid #eee;
@@ -13,19 +13,12 @@ const TodoListComponent = styled.div`
   width: 100%;
 `;
 
-function TodoList({ todos, deleteHandler, todosUpdateHandler }) {
-  return (
-    <TodoListComponent>
-      {todos.map((v) => (
-        <Todo
-          data={v}
-          key={v.id}
-          deleteHandler={deleteHandler}
-          todosUpdateHandler={todosUpdateHandler}
-        />
-      ))}
-    </TodoListComponent>
-  );
-}
+const TodoList = ({ todos, handleDeleteTodo, handleUpdateTodo }) => (
+  <TodoListComponent>
+    {todos.map((todo) => (
+      <TodoItem data={todo} key={todo.id} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />
+    ))}
+  </TodoListComponent>
+);
 
 export default TodoList;

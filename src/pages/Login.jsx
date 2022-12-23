@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { postLogin, postSignup } from "../api/auth";
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../api/auth';
 
-import InputBox from "../components/InputBox";
-import Button from "../components/Button";
+import InputBox from '../components/InputBox';
+import Button from '../components/Button';
+import Modal from '../components/Modal';
 
 const LoginComponent = styled.div`
   width: 100%;
@@ -46,24 +47,29 @@ const LoginComponent = styled.div`
     padding: 15px;
   }
 `;
-
-function Login() {
-  const [menu, setMenu] = useState("로그인");
-  const menuArray = ["로그인", "회원가입"];
-  const menuClickHandler = (m) => setMenu(m);
+const LOGIN_INITIAL = {
+  email: { txt: '', check: null },
+  password: { txt: '', check: null },
+};
+const SIGNUP_INITIAL = {
+  ...LOGIN_INITIAL,
+  passwordCheck: { txt: '', check: null },
+};
+const Login = () => {
+  const [menu, setMenu] = useState('로그인');
+  const menuArray = ['로그인', '회원가입'];
   const navigate = useNavigate();
-
-  const LOGIN_INITIAL = {
-    email: { txt: "", check: null },
-    password: { txt: "", check: null },
+  const objectCopy = (obj) => {
+    const newObj = JSON.parse(JSON.stringify(obj));
+    return newObj;
   };
-  const SIGNUP_INITIAL = {
-    ...LOGIN_INITIAL,
-    passwordCheck: { txt: "", check: null },
-  };
-  const [userInfo, setUserInfo] = useState(LOGIN_INITIAL);
+  const [userInfo, setUserInfo] = useState(objectCopy(LOGIN_INITIAL));
   const [cursor, setCursor] = useState(false);
-  const onChange = (id, txt) => {
+  const [isModal, setIsModal] = useState(false);
+
+  const handleIsModal = () => setIsModal(!isModal);
+
+  const handleChangeInput = (id, txt) => {
     setUserInfo((state) => {
       const newState = { ...state };
       newState[id].txt = txt;
@@ -72,37 +78,51 @@ function Login() {
       return newState;
     });
   };
-  const onSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (cursor) {
       const data = {
         email: userInfo.email.txt,
         password: userInfo.password.txt,
       };
-      if (menu === "로그인") {
-        postLogin(data).then((res) => res.status === 200 && navigate("/todo"));
+      if (menu === '로그인') {
+        const res = await authAPI.signin(data);
+        if (res.status === 200) {
+          localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
+          navigate('/todo');
+        } else if (res.response.status === 401) handleIsModal();
       } else {
-        postSignup(data).then((res) => res.status === 201 && navigate("/todo"));
+        const res = await authAPI.signup(data);
+        if (res.status === 201) {
+          localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
+          navigate('/todo');
+        } else if (res.response.status === 400) handleIsModal();
       }
     }
   };
 
   const validity = (id, txt) => {
-    if (id === "email") {
-      if (!txt.includes("@")) return "이메일은 @가 포함되어야 합니다";
-      else return true;
-    } else if (id === "password") {
-      if (txt.length < 8) return "비밀번호는 8자리 이상이여야 합니다";
-      else return true;
-    } else if (id === "passwordCheck") {
-      if (txt !== userInfo.password.txt) return "비밀번호가 다릅니다";
-      else return true;
+    if (id === 'email') {
+      const regex =
+        // eslint-disable-next-line no-useless-escape
+        /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      if (txt.match(regex) === null) return '이메일 형식이 올바르지 않습니다';
+      return true;
+    }
+    if (id === 'password') {
+      if (txt.length < 8) return '비밀번호는 8자리 이상이여야 합니다';
+      return true;
+    }
+    if (id === 'passwordCheck') {
+      if (txt !== userInfo.password.txt) return '비밀번호가 다릅니다';
+      return true;
     }
   };
   const checkCursor = (obj) => {
     let result = true;
-    for (const key in obj) {
-      if (obj[key].check !== true) {
+    const values = Object.values(obj);
+    for (let i = 0; i < values.length; i++) {
+      if (values[i].check !== true) {
         result = false;
         break;
       }
@@ -110,61 +130,50 @@ function Login() {
     return result;
   };
 
+  const handleMenuClick = (m) => setMenu(m);
   useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    if (accessToken) navigate("/todo");
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) navigate('/todo');
   }, []);
   useEffect(() => {
-    if (menu === "로그인") setUserInfo(LOGIN_INITIAL);
-    else setUserInfo(SIGNUP_INITIAL);
+    if (menu === '로그인') setUserInfo(objectCopy(LOGIN_INITIAL));
+    else setUserInfo(objectCopy(SIGNUP_INITIAL));
   }, [menu]);
   return (
     <LoginComponent>
+      {isModal && (
+        <Modal
+          title={menu === '로그인' ? '로그인 오류' : '회원가입 오류'}
+          content={menu === '로그인' ? '아이디, 비밀번호를 확인해주세요' : '중복된 회원입니다'}
+          onClose={handleIsModal}
+        />
+      )}
       <div>
         <div className="menu">
-          {menuArray.map((v, i) => (
-            <div
-              key={i}
-              onClick={() => menuClickHandler(v)}
-              className={menu === v ? "select" : ""}
-            >
+          {menuArray.map((v) => (
+            <div key={v} onClick={() => handleMenuClick(v)} className={menu === v ? 'select' : ''} role="presentation">
               {v}
             </div>
           ))}
         </div>
 
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit}>
           <h1>{menu}</h1>
-          <InputBox
-            type="text"
-            value={userInfo}
-            onChange={onChange}
-            id={"email"}
-          />
-          <InputBox
-            type="password"
-            value={userInfo}
-            onChange={onChange}
-            id={"password"}
-          />
-          {menu === "회원가입" ? (
-            <InputBox
-              type="password"
-              value={userInfo}
-              id={"passwordCheck"}
-              onChange={onChange}
-            />
+          <InputBox type="text" value={userInfo} onChange={handleChangeInput} id="email" />
+          <InputBox type="password" value={userInfo} onChange={handleChangeInput} id="password" />
+          {menu === '회원가입' ? (
+            <InputBox type="password" value={userInfo} id="passwordCheck" onChange={handleChangeInput} />
           ) : (
             <></>
           )}
 
-          <Button onClick={onSubmit} style={{ cursor }}>
+          <Button onClick={handleSubmit} style={{ cursor }}>
             {menu}
           </Button>
         </form>
       </div>
     </LoginComponent>
   );
-}
+};
 
 export default Login;
