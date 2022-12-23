@@ -72,7 +72,11 @@ const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
   return (
     <TodoComponent>
       <div className={isCompleted ? 'todo done' : 'todo'}>
-        {isEdit ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
+        {isEdit ? (
+          <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} />
+        ) : (
+          <span>{todo}</span>
+        )}
         {isEdit ? (
           <div className="action-icons">
             <Button variant="contained" color="success" onClick={handleEdit}>
