@@ -9,8 +9,6 @@
 
 > 2022.12.20 - 2022.12.23
 
-<br />
-
 ### 📢 배포 링크
 
 > http://pre-todo-list.s3-website.ap-northeast-2.amazonaws.com/
@@ -315,6 +313,8 @@
     export default TodoInput;
     ```
 
+    <br />
+
     > 📌 TodoInput 컴포넌트에서는 handleCreateTodo 함수를 props로 받아옵니다.  
     > 📌 handleCreateTodo 함수는 TodoInput 컴포넌트에서 투두 리스트를 추가할 때 실행됩니다.  
     > 📌 TodoInput 컴포넌트에서는 todo라는 state를 가지고 있고, input의 value로 사용됩니다.  
@@ -434,6 +434,8 @@
 
     export default memo(TodoItem);
     ```
+
+    <br />
 
     > 📌 TodoItem 컴포넌트에서는 handleDeleteTodo 함수와 handleUpdateTodo 함수를 props로 받아옵니다.  
     > 📌 handleDeleteTodo 함수는 TodoItem 컴포넌트에서 투두 리스트를 삭제할 때 실행됩니다.  
