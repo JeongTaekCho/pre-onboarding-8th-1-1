@@ -46,7 +46,7 @@ const TodoInput = ({ handleCreateTodo }) => {
   return (
     <TodoInputComponent onSubmit={handleSubmit}>
       <input placeholder="new Todo.." onChange={handleChangeInput} value={todo} />
-      <button type="button">+</button>
+      <button type="submit">+</button>
     </TodoInputComponent>
   );
 };
