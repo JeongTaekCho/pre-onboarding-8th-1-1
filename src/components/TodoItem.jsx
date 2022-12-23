@@ -1,7 +1,8 @@
-import React, { useState, useRef, memo } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { BsCheckSquareFill, BsCheckSquare, BsPencil } from 'react-icons/bs';
 import { TiDeleteOutline } from 'react-icons/ti';
+import { Button } from '@mui/material';
 
 const TodoComponent = styled.div`
   width: 100%;
@@ -22,7 +23,9 @@ const TodoComponent = styled.div`
       padding: 8px;
       font-size: 16px;
       font-weight: 700;
-      margin: 16px;
+      margin: 16px 16px 16px 8px;
+      outline: none;
+      border: 1px solid #b2b2b2;
     }
 
     &.done {
@@ -66,21 +69,18 @@ const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
     setIsEdit(false);
     setNewTodo(todo);
   };
-  console.log('ss');
   return (
     <TodoComponent>
       <div className={isCompleted ? 'todo done' : 'todo'}>
-        <span>
-          {isEdit ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
-        </span>
+        {isEdit ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
         {isEdit ? (
           <div className="action-icons">
-            <button type="button" onClick={handleEdit}>
+            <Button variant="contained" color="success" onClick={handleEdit}>
               수정
-            </button>
-            <button type="button" onClick={updateCancel}>
+            </Button>
+            <Button variant="outlined" color="error" onClick={updateCancel}>
               취소
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="action-icons">
@@ -103,4 +103,4 @@ const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
   );
 };
 
-export default memo(TodoItem);
+export default TodoItem;
