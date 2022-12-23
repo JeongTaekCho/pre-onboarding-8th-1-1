@@ -13,15 +13,16 @@
 
 ## 📚 목차
 
-- [팀 정보](#✨-팀-정보)
-- [Best Practice](#🔧-best-practice)
-- [실행 방법](#💻-실행-방법)
-- [배포](#📡-배포)
-- [디렉토리 구조](#📂-디렉토리-구조)
+- [팀 정보](#팀-정보)
+- [Best Practice](#best-practice)
+- [실행 방법](#실행-방법)
+- [배포](#배포)
+- [디렉토리 구조](#디렉토리-구조)
 
 <br />
 
-## ✨ 팀 정보 
+## 팀 정보
+
 원티드 프리온보딩 프론트엔드 인턴쉽 과정 1팀입니다.
 
 ### Members
@@ -130,20 +131,20 @@
     </tr>
 </table>
 
-
 ### Notion
 
 > https://www.notion.so/8-1-e616fa02748b428ebd94686ac7607fd7
 
 <br />
 
-## 🛠 Best Practice 
+## Best Practice
 
 과제에서 요구한 기능들의 구현 여부 및 Best Practice로 도출된 코드들에 대해 설명합니다.
 
 ### Assignment1
 
 - [x] 이메일과 비밀번호의 유효성 검사기능을 구현해주세요
+
   - [x] 이메일 조건: `@` 포함
   - [x] 비밀번호 조건: 8자 이상
   - [x] 입력된 이메일과 비밀번호가 위 조건을 만족할 때만 버튼이 활성화 되도록 해주세요
@@ -154,7 +155,8 @@
   ```jsx
   const validity = (id, txt) => {
     if (id === 'email') {
-      const regex = /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+      const regex =
+        /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
 
       if (txt.match(regex) === null) return '이메일 형식이 올바르지 않습니다';
 
@@ -172,7 +174,7 @@
 
       return true;
     }
-  }
+  };
   ```
 
   <br />
@@ -195,26 +197,26 @@
     const data = {
       email: userInfo.email.txt,
       password: userInfo.password.txt,
-    }
-    
+    };
+
     if (menu === '로그인') {
-      const res = await authAPI.signin(data)
+      const res = await authAPI.signin(data);
 
       if (res.status === 200) {
-        localStorage.setItem('access_token', `Bearer ${res.data.access_token}`)
-        navigate('/todo')
+        localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
+        navigate('/todo');
       } else if (res.response.status === 401) handleIsModal();
-      
     } else {
       const res = await authAPI.signup(data);
 
       if (res.status === 201) {
-        localStorage.setItem('access_token', `Bearer ${res.data.access_token}`)
-        navigate('/todo')
+        localStorage.setItem('access_token', `Bearer ${res.data.access_token}`);
+        navigate('/todo');
       } else if (res.response.status === 400) handleIsModal();
     }
   }
   ```
+
   <br />
 
   > 📌 유효성 검사 결과에 따라 버튼 활성화 여부가 결정되도록 구현했습니다.  
@@ -225,229 +227,248 @@
 ### Assignment3
 
 - [x] 로그인 여부에 따른 리다이렉트 처리를 구현해주세요
+
   - [x] 로컬 스토리지에 토큰이 있는 상태로 `/` 페이지에 접속한다면 `/todo` 경로로 리다이렉트 시켜주세요
   - [x] 로컬 스토리지에 토큰이 없는 상태로 `/todo`페이지에 접속한다면 `/` 경로로 리다이렉트 시켜주세요
 
   <br />
 
-  ```
-  코드
+  ```jsx
+  // page/Login.jsx
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) navigate('/todo');
+  }, []);
+
+  // page/Todo.jsx
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access_token');
+    if (!accessToken) navigate('/');
+  }, []);
   ```
 
   <br />
 
-  > 설명
+  > 📌 각 페이지에서 마운트될 때 토큰 여부를 확인합니다.  
+  > 📌 토큰 여부 결과에 따라 `navigate`를 사용하여 리다이렉트를 구현했습니다.
 
 ---
 
 ### Assignment4
 
 - [x] `/todo`경로에 접속하면 투두 리스트의 목록을 볼 수 있도록 해주세요
-  - [x] 리스트 페이지에는 투두 리스트의 내용과 완료 여부가 표시되어야 합니다.
-  - [x] 리스트 페이지에는 입력창과 추가 버튼이 있고, 추가 버튼을 누르면 입력창의 내용이 새로운 투두 리스트로 추가되도록 해주세요
+- [x] 리스트 페이지에는 투두 리스트의 내용과 완료 여부가 표시되어야 합니다.
+- [x] 리스트 페이지에는 입력창과 추가 버튼이 있고, 추가 버튼을 누르면 입력창의 내용이 새로운 투두 리스트로 추가되도록 해주세요
 
-  <br />
+<br />
 
-  ```jsx
-  // pages/Todo.jsx
-  const { data: todos, setRefetch } = useFetch('/todos');
+```jsx
+// pages/Todo.jsx
+const { data: todos, setRefetch } = useFetch('/todos');
 
-  const handleCreateTodo = async (todo) => {
-    try {
-      await todoAPI.createTodo(todo);
-      setRefetch((prev) => prev + 1);
-    } catch (err) {
-      return err;
-    }
+const handleCreateTodo = async (todo) => {
+  try {
+    await todoAPI.createTodo(todo);
+    setRefetch((prev) => prev + 1);
+  } catch (err) {
+    return err;
+  }
+};
+
+<TodoInput handleCreateTodo={handleCreateTodo} />;
+{
+  todos && <TodoList todos={todos} />;
+}
+```
+
+> 📌 투두 리스트를 추가하는 함수를 `TodoInput` 컴포넌트에 props로 전달했습니다.  
+> 📌 `TodoInput` 컴포넌트에서는 `handleCreateTodo` 함수를 실행시켜 투두 리스트를 추가합니다.  
+> 📌 `handleCreateTodo` 함수는 `todoAPI`에서 `createTodo` 함수를 실행시킵니다.  
+> 📌 `createTodo` 함수는 `axios`를 통해 `POST` 요청을 보내고, `setRefetch`를 통해 `refetch`를 실행시킵니다.  
+> 📌 `refetch`가 실행되면 `useFetch`의 `useEffect`가 실행되고, `GET` 요청을 통해 투두 리스트를 가져옵니다.  
+> 📌 `TodoList` 컴포넌트에서는 `todos`를 props로 받아 투두 리스트를 렌더링합니다.
+
+```jsx
+const TodoInput = ({ handleCreateTodo }) => {
+  const [todo, setTodo] = useState('');
+
+  const handleChangeInput = (e) => setTodo(e.target.value);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleCreateTodo(todo);
+    setTodo('');
   };
+  return (
+    <TodoInputComponent onSubmit={handleSubmit}>
+      <input placeholder="new Todo.." onChange={handleChangeInput} value={todo} />
+      <button type="button">+</button>
+    </TodoInputComponent>
+  );
+};
 
-  <TodoInput handleCreateTodo={handleCreateTodo} />
-  {todos && <TodoList todos={todos} />}
-  ```
-  > 📌 투두 리스트를 추가하는 함수를 `TodoInput` 컴포넌트에 props로 전달했습니다.  
-  > 📌 `TodoInput` 컴포넌트에서는 `handleCreateTodo` 함수를 실행시켜 투두 리스트를 추가합니다.  
-  > 📌 `handleCreateTodo` 함수는 `todoAPI`에서 `createTodo` 함수를 실행시킵니다.  
-  > 📌 `createTodo` 함수는 `axios`를 통해 `POST` 요청을 보내고, `setRefetch`를 통해 `refetch`를 실행시킵니다.  
-  > 📌 `refetch`가 실행되면 `useFetch`의 `useEffect`가 실행되고, `GET` 요청을 통해 투두 리스트를 가져옵니다.  
-  > 📌 `TodoList` 컴포넌트에서는 `todos`를 props로 받아 투두 리스트를 렌더링합니다.  
-  
-    ```jsx
-    const TodoInput = ({ handleCreateTodo }) => {
-    const [todo, setTodo] = useState('');
+export default TodoInput;
+```
 
-    const handleChangeInput = (e) => setTodo(e.target.value);
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      handleCreateTodo(todo);
-      setTodo('');
-    };
-    return (
-      <TodoInputComponent onSubmit={handleSubmit}>
-        <input placeholder="new Todo.." onChange={handleChangeInput} value={todo} />
-        <button type="button">+</button>
-      </TodoInputComponent>
-    );
-    };
-
-    export default TodoInput;
-    ```
-
-  > 📌 TodoInput 컴포넌트에서는 handleCreateTodo 함수를 props로 받아옵니다.  
-  > 📌 handleCreateTodo 함수는 TodoInput 컴포넌트에서 투두 리스트를 추가할 때 실행됩니다.  
-  > 📌 TodoInput 컴포넌트에서는 todo라는 state를 가지고 있고, input의 value로 사용됩니다.  
-  > 📌 input의 value가 변경되면 handleChangeInput 함수가 실행되고, todo state를 변경합니다.  
+> 📌 TodoInput 컴포넌트에서는 handleCreateTodo 함수를 props로 받아옵니다.
+> 📌 handleCreateTodo 함수는 TodoInput 컴포넌트에서 투두 리스트를 추가할 때 실행됩니다.
+> 📌 TodoInput 컴포넌트에서는 todo라는 state를 가지고 있고, input의 value로 사용됩니다.
+> 📌 input의 value가 변경되면 handleChangeInput 함수가 실행되고, todo state를 변경합니다.
 
 ### Assignment5
 
 - [x] 투두 리스트의 수정, 삭제 기능을 구현해주세요
-  - [x] 투두 리스트의 개별 아이템 우측에 수정버튼이 존재하고 해당 버튼을 누르면 수정모드가 활성화되고 투두 리스트의 내용을 수정할 수 있도록 해주세요
-  - [x] 수정모드에서는 개별 아이템의 우측에 제출버튼과 취소버튼이 표시되며 해당 버튼을 통해서 수정 내용을 제출하거나 수정을 취소할 수 있도록 해주세요
-  - [x] 투두 리스트의 개별 아이템 우측에 삭제버튼이 존재하고 해당 버튼을 누르면 투두 리스트가 삭제되도록 해주세요
 
-  <br />
+- [x] 투두 리스트의 개별 아이템 우측에 수정버튼이 존재하고 해당 버튼을 누르면 수정모드가 활성화되고 투두 리스트의 내용을 수정할 수 있도록 해주세요
+- [x] 수정모드에서는 개별 아이템의 우측에 제출버튼과 취소버튼이 표시되며 해당 버튼을 통해서 수정 내용을 제출하거나 수정을 취소할 수 있도록 해주세요
+- [x] 투두 리스트의 개별 아이템 우측에 삭제버튼이 존재하고 해당 버튼을 누르면 투두 리스트가 삭제되도록 해주세요
 
-  ```jsx
-  // pages/Todo.js
-  const { data: todos, setRefetch } = useFetch('/todos');
+<br />
 
-  const handleUpdateTodo = async (id, newTodo, isCompleted) => {
-    try {
-      await todoAPI.updateTodo(id, newTodo, isCompleted);
-      setRefetch((prev) => prev + 1);
-    } catch (err) {
-      return err;
-    }
-  };
+```jsx
+// pages/Todo.js
+const { data: todos, setRefetch } = useFetch('/todos');
 
-  const handleDeleteTodo = async (id) => {
-    try {
-      await todoAPI.deleteTodo(id);
-      setRefetch((prev) => prev + 1);
-    } catch (err) {
-      return err;
-    }
-  };
-  
-  {todos && <TodoList todos={todos} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />}
+const handleUpdateTodo = async (id, newTodo, isCompleted) => {
+  try {
+    await todoAPI.updateTodo(id, newTodo, isCompleted);
+    setRefetch((prev) => prev + 1);
+  } catch (err) {
+    return err;
+  }
+};
 
+const handleDeleteTodo = async (id) => {
+  try {
+    await todoAPI.deleteTodo(id);
+    setRefetch((prev) => prev + 1);
+  } catch (err) {
+    return err;
+  }
+};
 
-  // components/TodoList.js
-  const TodoList = ({ todos, handleDeleteTodo, handleUpdateTodo }) => (
+{
+  todos && <TodoList todos={todos} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />;
+}
+
+// components/TodoList.js
+const TodoList = ({ todos, handleDeleteTodo, handleUpdateTodo }) => (
   <TodoListComponent>
     {todos.map((todo) => (
       <TodoItem data={todo} key={todo.id} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />
     ))}
   </TodoListComponent>
-  );
+);
 
-  export default memo(TodoList);
-  ```
+export default memo(TodoList);
+```
 
-  > 📌 `handleUpdateTodo` 함수는 `TodoList` 컴포넌트에서 투두 리스트를 수정할 때 실행됩니다.  
-  > 📌 `TodoList` 컴포넌트에서는 `handleUpdateTodo` 함수와 `handleDeleteTodo` 함수를 props로 받아옵니다.  
-  > 📌 `TodoList` 컴포넌트에서는 `todos` 상태를 `TodoItem` 컴포넌트에 props로 전달합니다.
+> 📌 `handleUpdateTodo` 함수는 `TodoList` 컴포넌트에서 투두 리스트를 수정할 때 실행됩니다.  
+> 📌 `TodoList` 컴포넌트에서는 `handleUpdateTodo` 함수와 `handleDeleteTodo` 함수를 props로 받아옵니다.  
+> 📌 `TodoList` 컴포넌트에서는 `todos` 상태를 `TodoItem` 컴포넌트에 props로 전달합니다.
 
-  ```jsx
-  // components/TodoItem.js
+```jsx
+// components/TodoItem.js
 
-  const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
-    const { todo, isCompleted, id } = data;
+const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
+  const { todo, isCompleted, id } = data;
 
-    const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
-    const [newTodo, setNewTodo] = useState(todo);
+  const [newTodo, setNewTodo] = useState(todo);
 
-    const inputRef = useRef();
+  const inputRef = useRef();
 
-    const handleEdit = () => {
-      setIsEdit(!isEdit);
-      if (isEdit) {
-        handleUpdateTodo(id, newTodo, false);
-      }
-    };
-
-    const updateCancel = () => {
-      setIsEdit(false);
-      setNewTodo(todo);
-    };
-
-    return (
-      <TodoComponent>
-        <div className={isCompleted ? 'todo done' : 'todo'}>
-          <span>
-            {isEdit ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
-          </span>
-          {isEdit ? (
-            <div className="action-icons">
-              <button type="button" onClick={handleEdit}>
-                수정
-              </button>
-              <button type="button" onClick={updateCancel}>
-                취소
-              </button>
-            </div>
-          ) : (
-            <div className="action-icons">
-              <div
-                className="action-icon complete"
-                onClick={() => handleUpdateTodo(id, todo, !isCompleted)}
-                role="presentation">
-                {isCompleted ? <BsCheckSquareFill /> : <BsCheckSquare />}
-              </div>
-              <div className="action-icon" onClick={handleEdit} role="presentation">
-                <BsPencil />
-              </div>
-              <div className="action-icon delete" onClick={() => handleDeleteTodo(id)} role="presentation">
-                <TiDeleteOutline />
-              </div>
-            </div>
-          )}
-        </div>
-      </TodoComponent>
-    );
+  const handleEdit = () => {
+    setIsEdit(!isEdit);
+    if (isEdit) {
+      handleUpdateTodo(id, newTodo, false);
+    }
   };
 
-  export default memo(TodoItem);
-  ```
+  const updateCancel = () => {
+    setIsEdit(false);
+    setNewTodo(todo);
+  };
 
-  > 📌 TodoItem 컴포넌트에서는 handleDeleteTodo 함수와 handleUpdateTodo 함수를 props로 받아옵니다.  
-  > 📌 handleDeleteTodo 함수는 TodoItem 컴포넌트에서 투두 리스트를 삭제할 때 실행됩니다.  
-  > 📌 handleUpdateTodo 함수는 TodoItem 컴포넌트에서 투두 리스트를 수정할 때 실행됩니다.  
-  > 📌 TodoItem 컴포넌트에서는 투두의 data 상태를 TodoItem 컴포넌트에 props로 전달합니다.  
-  > 📌 TodoItem 컴포넌트에서는 isEdit 상태를 통해 투두 리스트를 수정할 때와 수정하지 않을 때를 구분합니다.  
+  return (
+    <TodoComponent>
+      <div className={isCompleted ? 'todo done' : 'todo'}>
+        <span>
+          {isEdit ? <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} ref={inputRef} /> : todo}
+        </span>
+        {isEdit ? (
+          <div className="action-icons">
+            <button type="button" onClick={handleEdit}>
+              수정
+            </button>
+            <button type="button" onClick={updateCancel}>
+              취소
+            </button>
+          </div>
+        ) : (
+          <div className="action-icons">
+            <div
+              className="action-icon complete"
+              onClick={() => handleUpdateTodo(id, todo, !isCompleted)}
+              role="presentation">
+              {isCompleted ? <BsCheckSquareFill /> : <BsCheckSquare />}
+            </div>
+            <div className="action-icon" onClick={handleEdit} role="presentation">
+              <BsPencil />
+            </div>
+            <div className="action-icon delete" onClick={() => handleDeleteTodo(id)} role="presentation">
+              <TiDeleteOutline />
+            </div>
+          </div>
+        )}
+      </div>
+    </TodoComponent>
+  );
+};
+
+export default memo(TodoItem);
+```
+
+> 📌 TodoItem 컴포넌트에서는 handleDeleteTodo 함수와 handleUpdateTodo 함수를 props로 받아옵니다.  
+> 📌 handleDeleteTodo 함수는 TodoItem 컴포넌트에서 투두 리스트를 삭제할 때 실행됩니다.  
+> 📌 handleUpdateTodo 함수는 TodoItem 컴포넌트에서 투두 리스트를 수정할 때 실행됩니다.  
+> 📌 TodoItem 컴포넌트에서는 투두의 data 상태를 TodoItem 컴포넌트에 props로 전달합니다.  
+> 📌 TodoItem 컴포넌트에서는 isEdit 상태를 통해 투두 리스트를 수정할 때와 수정하지 않을 때를 구분합니다.
 
 <br />
 
-## 💻 실행 방법
+## 실행 방법
 
 해당 프로젝트를 로컬서버에서 실행하기 위해서는 Git 과 Npm (node.js를 포함) 이 설치되어 있어야 합니다.
-
 
 1. 레파지토리 클론
 
    ```
    git clone https://github.com/preOnboarding8-team1/todo-list.git
    ```
+
 2. packages 설치
 
    ```
    npm install
    ```
+
 3. 실행
 
    ```
    npm start
    ```
 
-## 📡 배포
+## 배포
+
 AWS EC2를 사용하여 배포되었습니다.
 
 > https://fefeafea
 
 <br />
 
-## 📂 디렉토리 구조
+## 디렉토리 구조
 
 <details>
     <summary>Repository Overview</summary>
@@ -466,6 +487,5 @@ AWS EC2를 사용하여 배포되었습니다.
         ┗ 📂 pages
           ┣ 📝Login.jsx
           ┗ 📝Todo.jsx
+
 </details>
-
-
