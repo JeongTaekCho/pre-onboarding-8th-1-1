@@ -1,4 +1,4 @@
-import React, { useState, useRef, memo } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { BsCheckSquareFill, BsCheckSquare, BsPencil } from 'react-icons/bs';
 import { TiDeleteOutline } from 'react-icons/ti';
@@ -66,7 +66,6 @@ const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
     setIsEdit(false);
     setNewTodo(todo);
   };
-  console.log('ss');
   return (
     <TodoComponent>
       <div className={isCompleted ? 'todo done' : 'todo'}>
@@ -103,4 +102,4 @@ const TodoItem = ({ data, handleDeleteTodo, handleUpdateTodo }) => {
   );
 };
 
-export default memo(TodoItem);
+export default TodoItem;

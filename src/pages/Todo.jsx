@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import TodoInput from '../components/TodoInput';
@@ -47,7 +47,7 @@ const TodoContainer = styled.div`
 
 const Todo = () => {
   const navigate = useNavigate();
-  const { data: todos, setRefetch } = useFetch('/todos');
+  const { data: todos, setRefetch, isPending } = useFetch('/todos');
 
   useEffect(() => {
     const accessToken = localStorage.getItem('access_token');
@@ -80,6 +80,7 @@ const Todo = () => {
       return err;
     }
   };
+
   const handleLogout = () => {
     localStorage.clear();
     navigate('/');
@@ -95,7 +96,9 @@ const Todo = () => {
           </Button>
         </header>
         <TodoInput handleCreateTodo={handleCreateTodo} />
-        {todos && <TodoList todos={todos} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />}
+        {!isPending && (
+          <TodoList todos={todos} handleDeleteTodo={handleDeleteTodo} handleUpdateTodo={handleUpdateTodo} />
+        )}
       </TodoContainer>
     </TodoPage>
   );

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import TodoItem from './TodoItem';
 
@@ -21,4 +21,4 @@ const TodoList = ({ todos, handleDeleteTodo, handleUpdateTodo }) => (
   </TodoListComponent>
 );
 
-export default memo(TodoList);
+export default TodoList;
